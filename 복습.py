@@ -1,31 +1,45 @@
-def dfs(x, y):
-  if x < 0 or y < 0 or x >= n or y >= m:  # 0부터 시작하기 때문에 x >= n, y >= m 주의
-    return False
-  
-  if graph[x][y] == 0:
-    graph[x][y] = 1
+from collections import deque
 
-    dfs(x - 1, y)
-    dfs(x + 1, y)
-    dfs(x, y - 1)
-    dfs(x, y + 1)
+def bfs(x, y):
+  queue = deque()
+  queue.append((x, y))
 
-    return True
-  return False
+  while queue:
+    x, y = queue.popleft()
     
+    # 현재 위치에서 네가지 방향으로의 위치 확인
+    for i in range(4):
+      nx = x + dx[i]
+      ny = y + dy[i]
 
-input_data = list(map(int, input().split()))
-n = input_data[0]
-m = input_data[1]
+      # 공간 벗어난 경우 무시
+      if nx < 0 or nx >= n or ny < 0 or ny >= m:
+        continue
+      
+      # 괴물이 있는 경우 무시
+      if graph[nx][ny] == 0:
+        continue
+
+      # 해당 노드를 처음 방문하는 경우에만 최단 거리 기록
+      if graph[nx][ny] == 1:
+        graph[nx][ny] = graph[x][y] + 1
+        queue.append((nx, ny))
+
+  return graph[n - 1][m - 1]
+
+
+# input = list(map(int, input().split()))
+# n = input[0]
+# m = input[1]
+
+n, m = map(int, input().split())
 
 graph = []
 for i in range(n):
   graph.append(list(map(int, input())))
 
-result = 0
-for i in range(n):
-  for j in range(m):
-    if dfs(i, j) == True:
-      result += 1
+# 이동할 네 가지 방항 (상하좌우)
+dx = [-1, 1, 0, 0]
+dy = [0, 0, -1, 1]
 
-print(result)
+print(bfs(0, 0))
